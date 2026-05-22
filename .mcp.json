@@ -1,14 +1,13 @@
 {
   "mcpServers": {
-    "awslabs.terraform-mcp-server": {
+    "hashicorp.terraform-mcp-server": {
       "type": "stdio",
-      "command": "uvx",
+      "command": "docker",
       "args": [
-        "awslabs.terraform-mcp-server@latest"
+        "run", "-i", "--rm",
+        "hashicorp/terraform-mcp-server:latest"
       ],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
+      "env": {}
     },
     "aws-knowledge-mcp": {
       "type": "http",
@@ -24,7 +23,7 @@
       ],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR",
-        "AWS_REGION": "eu-central-1"
+        "AWS_REGION": "us-east-1"
       }
     },
     "context7": {
