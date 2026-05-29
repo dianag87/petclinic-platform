@@ -291,6 +291,17 @@ docker push {account}.dkr.ecr.us-east-1.amazonaws.com/petclinic-{env}/{service}:
   "rules": [
     {
       "rulePriority": 1,
+      "description": "Expire untagged images after 7 days",
+      "selection": {
+        "tagStatus": "untagged",
+        "countType": "sinceImagePushed",
+        "countUnit": "days",
+        "countNumber": 7
+      },
+      "action": { "type": "expire" }
+    },
+    {
+      "rulePriority": 2,
       "description": "Keep last 10 images",
       "selection": {
         "tagStatus": "any",

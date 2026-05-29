@@ -43,8 +43,31 @@ module "eks" {
   }
 }
 
+module "ecr" {
+  source = "../../modules/ecr"
+
+  project     = var.project
+  environment = var.environment
+
+  service_names = [
+    "config-server",
+    "discovery-server",
+    "api-gateway",
+    "customers-service",
+    "visits-service",
+    "vets-service",
+    "genai-service",
+    "admin-server",
+  ]
+
+  image_tag_mutability = "IMMUTABLE"
+
+  tags = {
+    Component = "registry"
+  }
+}
+
 # Modules will be added here as epics are completed:
-# E-4: module "ecr"
 # E-5: module "rds"
 # E-6: module "dns"
 # E-7: module "secrets"
