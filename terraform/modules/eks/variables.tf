@@ -12,7 +12,7 @@ variable "environment" {
 variable "cluster_version" {
   description = "Kubernetes version for the EKS cluster"
   type        = string
-  default     = "1.29"
+  default     = "1.30"
 }
 
 variable "subnet_ids" {
@@ -66,8 +66,25 @@ variable "node_disk_size" {
   default     = 20
 }
 
+variable "node_capacity_type" {
+  description = "EC2 capacity type for the node group: ON_DEMAND or SPOT. Use SPOT for dev cost savings; ON_DEMAND for prod stability."
+  type        = string
+  default     = "ON_DEMAND"
+
+  validation {
+    condition     = contains(["ON_DEMAND", "SPOT"], var.node_capacity_type)
+    error_message = "node_capacity_type must be 'ON_DEMAND' or 'SPOT'."
+  }
+}
+
 variable "tags" {
   description = "Additional tags to apply to all resources"
   type        = map(string)
   default     = {}
+}
+
+variable "admin_principal_arn" {
+  description = "IAM principal ARN (user or role) that receives cluster-admin access via EKS access entry. Set to your deploying IAM identity. Leave null to skip."
+  type        = string
+  default     = null
 }

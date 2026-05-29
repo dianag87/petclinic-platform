@@ -2,6 +2,8 @@ locals {
   name_prefix = "${var.project}-${var.environment}"
 }
 
+data "aws_caller_identity" "current" {}
+
 module "vpc" {
   source = "../../modules/vpc"
 
@@ -17,8 +19,31 @@ module "vpc" {
   }
 }
 
+module "eks" {
+  source = "../../modules/eks"
+
+  project     = var.project
+  environment = var.environment
+
+  subnet_ids    = module.vpc.public_subnet_ids
+  cluster_sg_id = module.vpc.eks_cluster_sg_id
+  node_sg_id    = module.vpc.eks_node_sg_id
+
+  node_instance_types = ["t4g.small"]
+  node_ami_type       = "AL2_ARM_64"
+  node_min_size       = 2
+  node_max_size       = 4
+  node_desired_size   = 2
+  node_disk_size      = 20
+
+  admin_principal_arn = data.aws_caller_identity.current.arn
+
+  tags = {
+    Component = "compute"
+  }
+}
+
 # Modules will be added here as epics are completed:
-# E-3: module "eks"
 # E-4: module "ecr"
 # E-5: module "rds"
 # E-6: module "dns"
