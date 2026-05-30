@@ -93,3 +93,18 @@ output "rds_secret_arn" {
   value       = module.rds.secret_arn
   sensitive   = true
 }
+
+output "acm_certificate_arn" {
+  description = "ACM wildcard certificate ARN"
+  value       = module.dns.certificate_arn
+}
+
+output "route53_zone_id" {
+  description = "Route 53 hosted zone ID"
+  value       = module.dns.zone_id
+}
+
+output "lb_controller_role_arn" {
+  description = "IAM role ARN for the AWS Load Balancer Controller (IRSA)"
+  value       = module.dns.lb_controller_role_arn
+}

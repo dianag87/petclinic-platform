@@ -90,6 +90,20 @@ module "rds" {
   }
 }
 
+module "dns" {
+  source = "../../modules/dns"
+
+  project     = var.project
+  environment = var.environment
+  domain_name = var.domain_name
+
+  oidc_provider_arn = module.eks.oidc_provider_arn
+  oidc_provider_url = module.eks.oidc_provider_url
+
+  tags = {
+    Component = "dns"
+  }
+}
+
 # Modules will be added here as epics are completed:
-# E-6: module "dns"
 # E-7: module "secrets"
