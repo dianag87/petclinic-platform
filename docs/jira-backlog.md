@@ -488,7 +488,7 @@ Run `terraform apply` for the dev environment and verify the VPC is created corr
 Create the EKS module in `terraform/modules/eks/` that provisions:
 
 **Technical Spec:** [EKS Cluster](./technical-spec.md#eks-cluster), [Terraform Modules](./technical-spec.md#terraform-modules)
-- EKS cluster with Kubernetes version 1.30+
+- EKS cluster with Kubernetes version 1.33+
 - Cluster IAM role with AmazonEKSClusterPolicy
 - OIDC provider for IRSA (IAM Roles for Service Accounts)
 - Cluster placed in public subnets (all-public design, see ADR-0001)

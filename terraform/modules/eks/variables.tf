@@ -12,7 +12,7 @@ variable "environment" {
 variable "cluster_version" {
   description = "Kubernetes version for the EKS cluster"
   type        = string
-  default     = "1.30"
+  default     = "1.33"
 }
 
 variable "subnet_ids" {
@@ -39,7 +39,7 @@ variable "node_instance_types" {
 variable "node_ami_type" {
   description = "AMI type for worker nodes"
   type        = string
-  default     = "AL2_ARM_64"
+  default     = "AL2023_ARM_64"
 }
 
 variable "node_min_size" {

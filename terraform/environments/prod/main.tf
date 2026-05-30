@@ -29,8 +29,9 @@ module "eks" {
   cluster_sg_id = module.vpc.eks_cluster_sg_id
   node_sg_id    = module.vpc.eks_node_sg_id
 
+  cluster_version     = "1.33"
   node_instance_types = ["t4g.small"]
-  node_ami_type       = "AL2_ARM_64"
+  node_ami_type       = "AL2023_ARM_64"
   node_min_size       = 2
   node_max_size       = 4
   node_desired_size   = 2
