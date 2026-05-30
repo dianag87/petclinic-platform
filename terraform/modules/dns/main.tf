@@ -102,3 +102,20 @@ resource "aws_iam_role_policy_attachment" "lb_controller" {
   role       = aws_iam_role.lb_controller.name
   policy_arn = aws_iam_policy.lb_controller.arn
 }
+
+# ─── Route 53 Alias Record → ALB (PETPLAT-31) ────────────────────────────────
+# Only created when alb_dns_name is provided (set after LBC creates the ALB).
+
+resource "aws_route53_record" "alb_alias" {
+  count = var.alb_dns_name != "" ? 1 : 0
+
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = "${var.alb_record_name}.${var.domain_name}"
+  type    = "A"
+
+  alias {
+    name                   = var.alb_dns_name
+    zone_id                = var.alb_zone_id
+    evaluate_target_health = true
+  }
+}

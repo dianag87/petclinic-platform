@@ -25,3 +25,21 @@ variable "domain_name" {
   description = "Domain name for Route 53 and ACM certificate (must already exist in Route 53)"
   type        = string
 }
+
+variable "alb_dns_name" {
+  description = "DNS name of the ALB created by the AWS Load Balancer Controller"
+  type        = string
+  default     = ""
+}
+
+variable "alb_zone_id" {
+  description = "Canonical hosted zone ID of the ALB (used for Route 53 alias record)"
+  type        = string
+  default     = ""
+}
+
+variable "alb_record_name" {
+  description = "Subdomain prefix for the Route 53 alias record (e.g. petclinic-dev → petclinic-dev.diana.click)"
+  type        = string
+  default     = ""
+}

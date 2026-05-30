@@ -100,6 +100,10 @@ module "dns" {
   oidc_provider_arn = module.eks.oidc_provider_arn
   oidc_provider_url = module.eks.oidc_provider_url
 
+  alb_dns_name    = var.alb_dns_name
+  alb_zone_id     = var.alb_zone_id
+  alb_record_name = var.alb_record_name
+
   tags = {
     Component = "dns"
   }

@@ -24,6 +24,24 @@ variable "oidc_provider_url" {
   type        = string
 }
 
+variable "alb_dns_name" {
+  description = "DNS name of the ALB created by the Load Balancer Controller"
+  type        = string
+  default     = ""
+}
+
+variable "alb_zone_id" {
+  description = "Canonical hosted zone ID of the ALB (for Route 53 alias record)"
+  type        = string
+  default     = ""
+}
+
+variable "alb_record_name" {
+  description = "Subdomain prefix for the Route 53 alias record (e.g. petclinic-dev)"
+  type        = string
+  default     = ""
+}
+
 variable "tags" {
   description = "Additional tags to apply to all resources"
   type        = map(string)
