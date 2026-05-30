@@ -31,7 +31,7 @@ module "eks" {
 
   cluster_version     = "1.33"
   node_instance_types = ["t4g.small"]
-  node_ami_type       = "AL2023_ARM_64"
+  node_ami_type       = "AL2023_ARM_64_STANDARD"
   node_min_size       = 2
   node_max_size       = 4
   node_desired_size   = 2
@@ -68,7 +68,28 @@ module "ecr" {
   }
 }
 
+module "rds" {
+  source = "../../modules/rds"
+
+  project     = var.project
+  environment = var.environment
+
+  subnet_ids        = module.vpc.public_subnet_ids
+  security_group_id = module.vpc.rds_sg_id
+
+  instance_class          = "db.t4g.micro"
+  allocated_storage       = 20
+  max_allocated_storage   = 20
+  multi_az                = false
+  backup_retention_period = 7
+  skip_final_snapshot     = true
+  deletion_protection     = false
+
+  tags = {
+    Component = "database"
+  }
+}
+
 # Modules will be added here as epics are completed:
-# E-5: module "rds"
 # E-6: module "dns"
 # E-7: module "secrets"
