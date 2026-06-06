@@ -20,3 +20,10 @@ variable "project" {
   type        = string
   default     = "petclinic"
 }
+
+variable "openai_api_key" {
+  description = "OpenAI API key for the GenAI service"
+  type        = string
+  sensitive   = true
+  default     = ""
+}

@@ -90,6 +90,21 @@ module "rds" {
   }
 }
 
+module "secrets" {
+  source = "../../modules/secrets"
+
+  project     = var.project
+  environment = var.environment
+
+  openai_api_key         = var.openai_api_key
+  oidc_provider_arn      = module.eks.oidc_provider_arn
+  oidc_provider_url      = module.eks.oidc_provider_url
+  secret_recovery_window = 30
+
+  tags = {
+    Component = "secrets"
+  }
+}
+
 # Modules will be added here as epics are completed:
 # E-6: module "dns"
-# E-7: module "secrets"
