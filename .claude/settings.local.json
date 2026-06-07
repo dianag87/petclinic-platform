@@ -7,9 +7,12 @@
     "allow": [
       "Bash(git init *)",
       "Bash(git checkout *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "awslabs.terraform-mcp-server",
     "aws-knowledge-mcp",
@@ -17,6 +20,5 @@
     "context7",
     "atlassian",
     "hashicorp.terraform-mcp-server"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }
