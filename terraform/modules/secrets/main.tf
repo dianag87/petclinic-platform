@@ -23,10 +23,12 @@ resource "aws_secretsmanager_secret" "openai_api_key" {
 }
 
 resource "aws_secretsmanager_secret_version" "openai_api_key" {
-  count = var.openai_api_key != "" ? 1 : 0
-
   secret_id     = aws_secretsmanager_secret.openai_api_key.id
-  secret_string = var.openai_api_key
+  secret_string = var.openai_api_key != "" ? var.openai_api_key : "PLACEHOLDER"
+
+  lifecycle {
+    ignore_changes = [secret_string]
+  }
 }
 
 data "aws_iam_policy_document" "eso_assume_role" {

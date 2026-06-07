@@ -32,9 +32,9 @@ module "eks" {
   cluster_version     = "1.33"
   node_instance_types = ["t4g.small"]
   node_ami_type       = "AL2023_ARM_64_STANDARD"
-  node_min_size       = 2
+  node_min_size       = 4
   node_max_size       = 4
-  node_desired_size   = 2
+  node_desired_size   = 4
   node_disk_size      = 20
 
   admin_principal_arn = data.aws_caller_identity.current.arn

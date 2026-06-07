@@ -149,6 +149,17 @@ resource "aws_security_group_rule" "node_ingress_nodeport_from_alb" {
   description              = "NodePort services from ALB"
 }
 
+# target-type: ip — ALB connects directly to pod IPs, bypassing NodePort
+resource "aws_security_group_rule" "node_ingress_pod_ports_from_alb" {
+  security_group_id        = aws_security_group.eks_node.id
+  type                     = "ingress"
+  protocol                 = "tcp"
+  from_port                = 8080
+  to_port                  = 9090
+  source_security_group_id = aws_security_group.alb.id
+  description              = "Pod ports from ALB (ip target-type)"
+}
+
 resource "aws_security_group_rule" "node_egress_all" {
   security_group_id = aws_security_group.eks_node.id
   type              = "egress"
@@ -225,12 +236,12 @@ resource "aws_security_group_rule" "alb_egress_nodeport" {
   description              = "To node ports on EKS nodes"
 }
 
-resource "aws_security_group_rule" "alb_egress_health_check" {
+resource "aws_security_group_rule" "alb_egress_pod_ports" {
   security_group_id        = aws_security_group.alb.id
   type                     = "egress"
   protocol                 = "tcp"
   from_port                = 8080
-  to_port                  = 8080
+  to_port                  = 9090
   source_security_group_id = aws_security_group.eks_node.id
-  description              = "Health checks to API Gateway on nodes"
+  description              = "Pod ports to EKS nodes (ip target-type)"
 }
