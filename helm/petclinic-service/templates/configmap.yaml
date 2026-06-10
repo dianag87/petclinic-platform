@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "petclinic-service.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "petclinic-service.labels" . | nindent 4 }}
+data:
+  {{- with .Values.configMapData }}
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
+  {{- if and .Values.needsDatabase .Values.global.rdsEndpoint }}
+  SPRING_DATASOURCE_URL: "jdbc:mysql://{{ .Values.global.rdsEndpoint }}:3306/petclinic"
+  {{- end }}

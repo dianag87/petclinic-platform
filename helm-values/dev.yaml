@@ -1,0 +1,12 @@
+replicaCount: 1
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false
+
+global:
+  imageRegistry: "820444288149.dkr.ecr.us-east-1.amazonaws.com"
+  envName: "dev"
+  rdsEndpoint: "petclinic-dev-mysql.cbaesyociqbn.us-east-1.rds.amazonaws.com"

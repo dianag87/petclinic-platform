@@ -1,0 +1,4 @@
+global:
+  imageRegistry: "820444288149.dkr.ecr.us-east-1.amazonaws.com"
+  envName: "prod"
+  rdsEndpoint: "petclinic-prod-mysql.cbaesyociqbn.us-east-1.rds.amazonaws.com"

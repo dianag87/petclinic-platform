@@ -1,0 +1,37 @@
+image:
+  name: discovery-server
+  tag: v1.0.0
+
+component: server
+
+service:
+  port: 8761
+
+configMapData:
+  SPRING_PROFILES_ACTIVE: docker
+  CONFIG_SERVER_URL: http://config-server:8888
+
+initContainers:
+  - name: wait-for-config-server
+    image: busybox:1.36
+    command: ['sh', '-c', 'until wget -qO- http://config-server:8888/actuator/health; do sleep 5; done']
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: ["ALL"]
+      readOnlyRootFilesystem: true
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        cpu: 50m
+        memory: 64Mi
+
+# Prod: 2 replicas, PDB enabled, no HPA
+replicaCount: 2
+autoscaling:
+  enabled: false
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
