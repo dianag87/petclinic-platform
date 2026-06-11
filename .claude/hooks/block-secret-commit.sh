@@ -21,7 +21,7 @@ if echo "$COMMAND" | grep -qE 'git\s+(add|commit)'; then
 
   # BLOCK 1: Catch bulk adds that could sweep in secret files
   # 'git add .', 'git add -A', 'git add --all' stage everything including secrets
-  if echo "$COMMAND" | grep -qE 'git\s+add\s+(-A|--all|\.)'; then
+  if echo "$COMMAND" | grep -qE 'git\s+add\s+(-A|--all|\.)(\s|$)'; then
     echo "BLOCKED: 'git add .' / 'git add -A' can accidentally stage secret files."
     echo ""
     echo "Instead, add files explicitly by name:"
