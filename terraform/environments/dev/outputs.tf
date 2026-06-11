@@ -119,3 +119,8 @@ output "openai_secret_arn" {
   value       = module.secrets.openai_secret_arn
   sensitive   = true
 }
+
+output "github_actions_role_arn" {
+  description = "IAM role ARN for GitHub Actions OIDC — set as AWS_ROLE_ARN in GitHub Secrets"
+  value       = module.github_oidc.role_arn
+}

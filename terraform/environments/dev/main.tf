@@ -109,6 +109,18 @@ module "dns" {
   }
 }
 
+module "github_oidc" {
+  source = "../../modules/github-oidc"
+
+  project     = var.project
+  environment = var.environment
+  app_repo    = "dianag87/spring-petclinic-microservices"
+
+  tags = {
+    Component = "ci"
+  }
+}
+
 module "secrets" {
   source = "../../modules/secrets"
 
