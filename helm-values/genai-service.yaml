@@ -1,7 +1,6 @@
 image:
   name: genai-service
   tag: bd25003
-  pullPolicy: IfNotPresent
 component: service
 service:
   port: 8084
