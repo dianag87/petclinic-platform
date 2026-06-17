@@ -1,6 +1,6 @@
 image:
   name: genai-service
-  tag: bd25003
+  tag: adc13f1
 component: service
 service:
   port: 8084
