@@ -842,7 +842,6 @@ git push
 ```
 
 ---
-re
 ## Observability
 
 ### Prometheus
