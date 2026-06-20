@@ -1,0 +1,91 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: petclinic-metric-rules
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: petclinic-metric-rules
+    app.kubernetes.io/part-of: petclinic
+    app.kubernetes.io/managed-by: kubectl
+    app.kubernetes.io/component: infrastructure
+spec:
+  groups:
+    - name: petclinic-alerts
+      interval: 15s
+      rules:
+        - alert: ServiceDown
+          expr: up == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Service {{ $labels.job }} is down"
+            description: "{{ $labels.job }} has been unreachable for more than 1 minute."
+
+        - alert: HighErrorRate
+          expr: rate(http_server_requests_seconds_count{status=~"5.."}[5m]) / rate(http_server_requests_seconds_count[5m]) > 0.05
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High 5xx error rate on {{ $labels.job }}"
+            description: "{{ $labels.job }} 5xx error rate is above 5% for 5 minutes."
+
+        - alert: HighLatency
+          expr: histogram_quantile(0.95, rate(http_server_requests_seconds_bucket[5m])) > 0.5
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High p95 latency on {{ $labels.job }}"
+            description: "p95 latency on {{ $labels.job }} exceeds 500ms for 5 minutes."
+
+        - alert: PodRestartLoop
+          expr: increase(kube_pod_container_status_restarts_total[15m]) > 3
+          for: 0m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Pod {{ $labels.pod }} is restarting repeatedly"
+            description: "Pod {{ $labels.pod }} restarted more than 3 times in 15 minutes."
+
+        - alert: HighMemoryUsage
+          expr: container_memory_working_set_bytes / container_spec_memory_limit_bytes > 0.8
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High memory usage in container {{ $labels.container }}"
+            description: "Container {{ $labels.container }} in {{ $labels.namespace }} is using over 80% of its memory limit."
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: petclinic-loki-rules
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: petclinic-loki-rules
+    app.kubernetes.io/part-of: petclinic
+    app.kubernetes.io/managed-by: kubectl
+    app.kubernetes.io/component: infrastructure
+spec:
+  groups:
+    - name: loki-petclinic-alerts
+      rules:
+        - alert: LogErrorSpike
+          expr: 'sum(rate({namespace=~"petclinic-.*"} |= "ERROR" [5m])) > 0.5'
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High error log rate in petclinic namespaces"
+            description: "Error log rate exceeds 0.5/s for 5 minutes in petclinic namespaces."
+
+        - alert: JVMOutOfMemory
+          expr: 'sum(count_over_time({namespace=~"petclinic-.*"} |= "OutOfMemoryError" [5m])) > 0'
+          for: 0m
+          labels:
+            severity: critical
+          annotations:
+            summary: "JVM OutOfMemoryError detected"
+            description: "OutOfMemoryError found in logs in petclinic namespaces within the last 5 minutes."

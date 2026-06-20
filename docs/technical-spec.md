@@ -1141,8 +1141,8 @@ No NAT Gateway cost ($0 saved vs ~$35-65/mo with NAT).
 | `node_instance_types` | list(string) | Instance types for nodes | `["t4g.small"]` |
 | `node_ami_type` | string | AMI type for nodes | `"AL2023_ARM_64_STANDARD"` |
 | `node_min_size` | number | Min node count | `2` |
-| `node_max_size` | number | Max node count | `4` |
-| `node_desired_size` | number | Desired node count | `2` |
+| `node_max_size` | number | Max node count | `8` |
+| `node_desired_size` | number | Desired node count | `8` |
 | `node_disk_size` | number | Disk size in GB | `20` |
 | `tags` | map(string) | Additional tags | `{}` |
 
