@@ -1,0 +1,72 @@
+# Karpenter NodePool + EC2NodeClass — dev environment (PETPLAT-73)
+#
+# Apply after Karpenter is installed:
+#   kubectl apply -f k8s/base/karpenter/nodepool.yaml
+#
+# Capacity type: on-demand only.
+# Graviton free trial is active until Dec 2026 — spot saves nothing during trial.
+# To enable spot after expiry, apply nodepool-spot-dev.yaml instead (PETPLAT-74).
+#
+# Resource limits (CPU 8, memory 32Gi) are REQUIRED. Without limits Karpenter
+# has no upper bound and could provision unbounded nodes on a single workload.
+#
+# Subnet and security group selectors use karpenter.sh/discovery tags.
+# These tags must be present on subnets and node security group in Terraform.
+# If missing, Karpenter cannot find network resources and provisioning fails silently.
+---
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: default
+  labels:
+    app.kubernetes.io/part-of: petclinic
+    app.kubernetes.io/managed-by: kubectl
+spec:
+  template:
+    spec:
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["arm64"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["on-demand"]
+        - key: node.kubernetes.io/instance-type
+          operator: In
+          values: ["t4g.small", "t4g.medium"]
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: default
+  limits:
+    cpu: "8"
+    memory: 32Gi
+  disruption:
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 30s
+---
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: default
+  labels:
+    app.kubernetes.io/part-of: petclinic
+    app.kubernetes.io/managed-by: kubectl
+spec:
+  amiSelectorTerms:
+    - alias: al2023@latest
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: petclinic-dev
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: petclinic-dev
+  # MUST match exactly the instance profile created by terraform/modules/karpenter/
+  # A mismatch causes nodes to launch but fail to join the cluster (kubelet auth fails)
+  instanceProfile: petclinic-dev-karpenter-node-profile
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: 20Gi
+        volumeType: gp3
+        encrypted: true

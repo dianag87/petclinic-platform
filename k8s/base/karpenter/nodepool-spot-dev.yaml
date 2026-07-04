@@ -1,0 +1,70 @@
+# Karpenter NodePool — Spot override for dev (PETPLAT-74)
+#
+# Apply this file AFTER the Graviton free trial expires to enable Spot savings.
+# This REPLACES nodepool.yaml in dev — do not apply both simultaneously.
+#
+# Spot savings: ~60-70% on compute vs on-demand.
+# Karpenter diversifies across t4g.small and t4g.medium to maximise spot availability.
+# The SQS interruption queue (petclinic-dev-karpenter-interruption) handles
+# spot termination notices and triggers graceful pod eviction automatically.
+#
+# Apply:
+#   kubectl apply -f k8s/base/karpenter/nodepool-spot-dev.yaml
+#
+# Verify Karpenter is using spot:
+#   kubectl get nodes -L karpenter.sh/capacity-type
+---
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: default
+  labels:
+    app.kubernetes.io/part-of: petclinic
+    app.kubernetes.io/managed-by: kubectl
+spec:
+  template:
+    spec:
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["arm64"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot", "on-demand"]
+        - key: node.kubernetes.io/instance-type
+          operator: In
+          values: ["t4g.small", "t4g.medium"]
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: default
+  limits:
+    cpu: "8"
+    memory: 32Gi
+  disruption:
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 30s
+---
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: default
+  labels:
+    app.kubernetes.io/part-of: petclinic
+    app.kubernetes.io/managed-by: kubectl
+spec:
+  amiSelectorTerms:
+    - alias: al2023@latest
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: petclinic-dev
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: petclinic-dev
+  instanceProfile: petclinic-dev-karpenter-node-profile
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: 20Gi
+        volumeType: gp3
+        encrypted: true

@@ -28,6 +28,7 @@ resource "aws_subnet" "public" {
     Name                                         = "${local.name_prefix}-public-${count.index + 1}"
     "kubernetes.io/cluster/${local.name_prefix}" = "shared"
     "kubernetes.io/role/elb"                     = "1"
+    "karpenter.sh/discovery"                     = local.name_prefix
   })
 }
 
@@ -105,7 +106,8 @@ resource "aws_security_group" "eks_node" {
   vpc_id      = aws_vpc.main.id
 
   tags = merge(var.tags, {
-    Name = "${local.name_prefix}-node-sg"
+    Name                     = "${local.name_prefix}-node-sg"
+    "karpenter.sh/discovery" = local.name_prefix
   })
 }
 

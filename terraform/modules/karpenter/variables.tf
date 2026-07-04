@@ -15,12 +15,17 @@ variable "cluster_name" {
 }
 
 variable "oidc_provider_arn" {
-  description = "OIDC provider ARN for IRSA"
+  description = "OIDC provider ARN for IRSA trust policy"
+  type        = string
+}
+
+variable "oidc_provider_url" {
+  description = "OIDC provider URL for IRSA trust policy conditions (without https://)"
   type        = string
 }
 
 variable "node_role_arn" {
-  description = "Node IAM role ARN (for Karpenter-managed nodes)"
+  description = "Node IAM role ARN — iam:PassRole is scoped to this ARN only"
   type        = string
 }
 

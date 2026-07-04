@@ -50,3 +50,8 @@ variable "openai_api_key" {
   sensitive   = true
   default     = ""
 }
+
+variable "budget_alert_email" {
+  description = "Email address to receive AWS budget alert notifications"
+  type        = string
+}
